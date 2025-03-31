@@ -2,17 +2,17 @@ name: Weekly Lottery Purchase
 
 on:
   schedule:
-    # 매주 월요일 오후 6시에 로또 구매
-    - cron: '0 9 * * 1'  # UTC 기준 월요일 9시 (한국시간 월요일 18시)
-    # 매주 토요일 추첨 직후 당첨 확인
-    - cron: '0 12 * * 6'  # UTC 기준 토요일 12시 (한국시간 토요일 21시)
+    # 매주 월요일 오후 10시에 로또 구매 (UTC 기준 월요일 13시)
+    - cron: '0 13 * * 1'
+    # 매주 토요일 오후 9시에 당첨 확인 (UTC 기준 토요일 12시)
+    - cron: '0 12 * * 6'
   workflow_dispatch:  # 수동 실행도 가능하게 설정
 
 jobs:
   buy-lottery:
     runs-on: ubuntu-latest
     # 로또 구매는 월요일에만 실행
-    if: github.event.schedule == '0 9 * * 1'
+    if: github.event.schedule == '0 13 * * 1'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
 
   check-winning:
     runs-on: ubuntu-latest
-    # 당첨 확인 작업은 토요일 추첨 직후에 실행 (토요일 오후 9시)
+    # 당첨 확인 작업은 토요일 오후 9시에 실행
     if: github.event.schedule == '0 12 * * 6'
     steps:
       - name: Checkout code
