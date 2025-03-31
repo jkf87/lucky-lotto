@@ -68,9 +68,8 @@ def check():
     load_dotenv()
 
     # 환경변수에서 계정 정보 및 웹훅 URL 가져오기
-    username = os.environ.get('USERNAME')
-    password = os.environ.get('PASSWORD')
-    slack_webhook_url = os.environ.get('SLACK_WEBHOOK_URL') 
+    username = os.environ.get('LOTTERY_USERNAME')
+    password = os.environ.get('LOTTERY_PASSWORD')
     discord_webhook_url = os.environ.get('DISCORD_WEBHOOK_URL')
 
     # 인증 컨트롤러 생성 및 로그인

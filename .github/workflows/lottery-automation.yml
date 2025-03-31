@@ -30,9 +30,9 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
-          echo "PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
-          echo "COUNT=${{ secrets.LOTTERY_COUNT }}" >> .env
+          echo "LOTTERY_USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
+          echo "LOTTERY_PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
+          echo "LOTTERY_COUNT=${{ secrets.LOTTERY_COUNT }}" >> .env
           echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
           echo "BUY_WIN720=${{ secrets.BUY_WIN720 }}" >> .env
 
