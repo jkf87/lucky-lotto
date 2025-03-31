@@ -1,0 +1,68 @@
+name: Weekly Lottery Purchase
+
+on:
+  schedule:
+    # 매주 월요일 오후 6시에 로또 구매
+    - cron: '0 9 * * 1'  # UTC 기준 월요일 9시 (한국시간 월요일 18시)
+    # 매주 토요일 추첨 직후 당첨 확인
+    - cron: '0 12 * * 6'  # UTC 기준 토요일 12시 (한국시간 토요일 21시)
+  workflow_dispatch:  # 수동 실행도 가능하게 설정
+
+jobs:
+  buy-lottery:
+    runs-on: ubuntu-latest
+    # 로또 구매는 월요일에만 실행
+    if: github.event.schedule == '0 9 * * 1'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML==6.0.1
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
+          echo "PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
+          echo "COUNT=${{ secrets.LOTTERY_COUNT }}" >> .env
+          echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
+          echo "BUY_WIN720=${{ secrets.BUY_WIN720 }}" >> .env
+
+      - name: Buy lottery tickets
+        run: python controller.py buy
+
+  check-winning:
+    runs-on: ubuntu-latest
+    # 당첨 확인 작업은 토요일 추첨 직후에 실행 (토요일 오후 9시)
+    if: github.event.schedule == '0 12 * * 6'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML==6.0.1
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
+          echo "PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
+          echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
+
+      - name: Check winning
+        run: python controller.py check 
