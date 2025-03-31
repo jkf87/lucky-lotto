@@ -94,9 +94,9 @@ def buy():
     load_dotenv() 
 
     # 환경변수에서 계정 정보, 구매 수량 및 웹훅 URL 가져오기
-    username = os.environ.get('USERNAME')
-    password = os.environ.get('PASSWORD')
-    count = int(os.environ.get('COUNT'))
+    username = os.environ.get('LOTTERY_USERNAME')
+    password = os.environ.get('LOTTERY_PASSWORD')
+    count = int(os.environ.get('LOTTERY_COUNT'))
     discord_webhook_url = os.environ.get('DISCORD_WEBHOOK_URL')
     # 환경변수에서 연금복권 구매 여부 확인 (기본값: 구매안함)
     buy_win720 = os.environ.get('BUY_WIN720', 'false').lower() == 'true'
