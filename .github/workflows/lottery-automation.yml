@@ -1,68 +1,52 @@
-name: Weekly Lottery Purchase
+name: Weekly Lottery Automation
 
 on:
   schedule:
-    # 매주 월요일 오후 10시에 로또 구매 (UTC 기준 월요일 13시)
+    # 매주 월요일 밤 10시에 로또 구매 (UTC 13:00)
     - cron: '0 13 * * 1'
-    # 매주 토요일 오후 9시에 당첨 확인 (UTC 기준 토요일 12시)
+    # 매주 토요일 밤 9시에 당첨 확인 (UTC 12:00)
     - cron: '0 12 * * 6'
-  workflow_dispatch:  # 수동 실행도 가능하게 설정
+  workflow_dispatch:  # 수동 실행 가능
 
 jobs:
   buy-lottery:
     runs-on: ubuntu-latest
-    # 로또 구매는 월요일에만 실행
-    if: github.event.schedule == '0 13 * * 1'
+    if: github.event.schedule == '0 13 * * 1'  # 월요일 작업만 실행
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install PyYAML==6.0.1
-          pip install -r requirements.txt
-
-      - name: Create .env file
-        run: |
-          echo "LOTTERY_USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
-          echo "LOTTERY_PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
-          echo "LOTTERY_COUNT=${{ secrets.LOTTERY_COUNT }}" >> .env
-          echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
-          echo "BUY_WIN720=${{ secrets.BUY_WIN720 }}" >> .env
-
+          cache: 'pip'
+      
+      - run: pip install -r requirements.txt
+      
       - name: Buy lottery tickets
-        run: python controller.py buy
+        run: make buy
+        env:
+          LOTTERY_USERNAME: ${{ secrets.LOTTERY_USERNAME }}
+          LOTTERY_PASSWORD: ${{ secrets.LOTTERY_PASSWORD }}
+          LOTTERY_COUNT: ${{ secrets.LOTTERY_COUNT }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          BUY_WIN720: ${{ secrets.BUY_WIN720 }}
 
   check-winning:
     runs-on: ubuntu-latest
-    # 당첨 확인 작업은 토요일 오후 9시에 실행
-    if: github.event.schedule == '0 12 * * 6'
+    if: github.event.schedule == '0 12 * * 6'  # 토요일 작업만 실행
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install PyYAML==6.0.1
-          pip install -r requirements.txt
-
-      - name: Create .env file
-        run: |
-          echo "USERNAME=${{ secrets.LOTTERY_USERNAME }}" > .env
-          echo "PASSWORD=${{ secrets.LOTTERY_PASSWORD }}" >> .env
-          echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
-
+          cache: 'pip'
+      
+      - run: pip install -r requirements.txt
+      
       - name: Check winning
-        run: python controller.py check 
+        run: make check
+        env:
+          LOTTERY_USERNAME: ${{ secrets.LOTTERY_USERNAME }}
+          LOTTERY_PASSWORD: ${{ secrets.LOTTERY_PASSWORD }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} 
