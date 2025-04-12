@@ -68,9 +68,15 @@ def check():
     load_dotenv()
 
     # 환경변수에서 계정 정보 및 웹훅 URL 가져오기
-    username = os.environ.get('LOTTERY_USERNAME')
-    password = os.environ.get('LOTTERY_PASSWORD')
-    discord_webhook_url = os.environ.get('DISCORD_WEBHOOK_URL')
+    username = str(os.environ.get('LOTTERY_USERNAME'))
+    password = str(os.environ.get('LOTTERY_PASSWORD'))
+    discord_webhook_url = str(os.environ.get('DISCORD_WEBHOOK_URL'))
+
+    # 필수 환경변수 검증
+    if not username or not password or not discord_webhook_url:
+        print("Error: Required environment variables are not set.")
+        print("Please check LOTTERY_USERNAME, LOTTERY_PASSWORD, and DISCORD_WEBHOOK_URL in your .env file")
+        return
 
     # 인증 컨트롤러 생성 및 로그인
     globalAuthCtrl = auth.AuthController()
@@ -80,12 +86,12 @@ def check():
     response = check_winning_lotto645(globalAuthCtrl)
     send_message(0, 0, response=response, webhook_url=discord_webhook_url)
 
-    # API 요청 간 간격 두기
-    time.sleep(10)
+    # # API 요청 간 간격 두기
+    # time.sleep(10)
     
-    # 연금복권 720+ 당첨 확인 및 알림 전송
-    response = check_winning_win720(globalAuthCtrl)
-    send_message(0, 1, response=response, webhook_url=discord_webhook_url)
+    # # 연금복권 720+ 당첨 확인 및 알림 전송
+    # response = check_winning_win720(globalAuthCtrl)
+    # send_message(0, 1, response=response, webhook_url=discord_webhook_url)
 
 # 복권 구매 메인 함수
 def buy(): 
@@ -93,13 +99,29 @@ def buy():
     load_dotenv() 
 
     # 환경변수에서 계정 정보, 구매 수량 및 웹훅 URL 가져오기
-    username = os.environ.get('LOTTERY_USERNAME')
-    password = os.environ.get('LOTTERY_PASSWORD')
-    count = int(os.environ.get('LOTTERY_COUNT'))
-    discord_webhook_url = os.environ.get('DISCORD_WEBHOOK_URL')
+    username = str(os.environ.get('LOTTERY_USERNAME'))
+    password = str(os.environ.get('LOTTERY_PASSWORD'))
+    count_str = os.environ.get('LOTTERY_COUNT')
+    discord_webhook_url = str(os.environ.get('DISCORD_WEBHOOK_URL'))
     # 환경변수에서 연금복권 구매 여부 확인 (기본값: 구매안함)
     buy_win720 = os.environ.get('BUY_WIN720', 'false').lower() == 'true'
     mode = "AUTO"  # 자동 구매 모드 설정
+
+    # 필수 환경변수 검증
+    if not username or not password or not discord_webhook_url:
+        print("Error: Required environment variables are not set.")
+        print("Please check LOTTERY_USERNAME, LOTTERY_PASSWORD, and DISCORD_WEBHOOK_URL in your .env file")
+        return
+
+    # LOTTERY_COUNT 검증 및 변환
+    try:
+        count = int(count_str) if count_str else 1  # 기본값 1
+        if count < 1 or count > 5:
+            print("Error: LOTTERY_COUNT must be between 1 and 5")
+            return
+    except ValueError:
+        print("Error: LOTTERY_COUNT must be a valid number")
+        return
 
     # 인증 컨트롤러 생성 및 로그인
     globalAuthCtrl = auth.AuthController()
