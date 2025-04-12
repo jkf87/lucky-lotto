@@ -20,8 +20,8 @@ jobs:
       - name: Run Scripts
         run: make check
         env:
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          COUNT: ${{ secrets.COUNT }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
+          LOTTERY_USERNAME: ${{ secrets.LOTTERY_USERNAME }}
+          LOTTERY_PASSWORD: ${{ secrets.LOTTERY_PASSWORD }}
+          LOTTERY_COUNT: ${{ secrets.LOTTERY_COUNT }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          BUY_WIN720: ${{ secrets.BUY_WIN720 }}
